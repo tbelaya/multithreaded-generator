@@ -27,6 +27,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-19 clang-format-19 clang-tidy-19 ninja-build
 
+      - name: Check Clang Tidy and Clang Format versions
+        run: |
+          clang-tidy-14 --version
+          clang-format-14 --version
+
       - name: Prepare build directory
         run: |
           rm -rf build
