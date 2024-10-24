@@ -1,0 +1,56 @@
+# Use the Google C++ Style Guide as the base
+BasedOnStyle: Google
+
+# Set the indentation style and width
+IndentWidth: 4            # Indent with 4 spaces
+TabWidth: 4               # Tab width for alignment
+UseTab: Never              # Use spaces instead of tabs
+
+# Control the column width for wrapping lines
+ColumnLimit: 100          # Maximum column width (default is 80)
+
+# Brace positioning style
+BreakBeforeBraces: Allman    # Put braces on a new line
+
+# Function and constructor declaration formatting
+AllowShortFunctionsOnASingleLine: Inline    # Allow small functions on one line
+AllowShortIfStatementsOnASingleLine: false  # Don't allow short ifs on one line
+AllowShortLoopsOnASingleLine: false         # Don't allow short loops on one line
+
+# Namespace formatting
+NamespaceIndentation: None
+
+# Formatting for comments
+CommentPragmas: "^ IWYU pragma:"  # Don't format comments matching this regex
+
+# Control spacing
+SpaceBeforeParens: ControlStatements # No space before parentheses in control statements
+SpaceAfterCStyleCast: true           # Space after C-style cast
+SpacesInParentheses: false           # No spaces inside parentheses
+SpacesInSquareBrackets: false        # No spaces inside square brackets
+SpaceBeforeRangeBasedForLoopColon: true  # Space before colon in range-based for
+SpaceBeforeCpp11BracedList: false        # No space before braced list
+
+# Include sorting
+SortIncludes: true              # Sort #includes in alphabetical order
+
+# Pointer and reference style
+PointerAlignment: Left          # Align pointers to the left (e.g., `int* ptr`)
+ReferenceAlignment: Left        # Align references to the left (e.g., `int& ref`)
+
+# Control formatting of macros
+AlignEscapedNewlines: Left      # Align escaped newlines on the left
+AlignTrailingComments: true     # Align trailing comments
+AllowAllParametersOfDeclarationOnNextLine: false  # Prevent long parameter lists from wrapping
+BinPackParameters: false        # No bin packing of parameters
+
+# Constructor initializer list formatting
+ConstructorInitializerIndentWidth: 4     # Indentation for initializer list
+BreakConstructorInitializers: BeforeComma # Break lines before commas in initializer lists
+
+# Control formatting for enums
+AllowShortEnumsOnASingleLine: true  # Allow short enums to be on one line
+
+# Control formatting of lambdas
+CompactNamespaces: false             # Do not use compact namespaces
+SpacesInContainerLiterals: false     # No spaces in container literals like `{1, 2, 3}`
