@@ -10,9 +10,9 @@ void Producer::produce()
     {
         if (!m_queue->tryPush(m_distribution(m_generator)))
         {
+            // If the queue is full and the push operation fails, yield the current thread
+            // to allow other threads to run.
             std::this_thread::yield();
-            // Alternatively
-            // std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
     std::cout << "Producer finished task.\n";

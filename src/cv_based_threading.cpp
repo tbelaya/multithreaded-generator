@@ -41,6 +41,9 @@ void produce(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& comple
     {
         if (!queue.tryPush(g_distribution(g_generator)))
         {
+            // The producer thread will wait on the CV until one of the consumers signals that space
+            // has been freed in the queue, allowing the producer to continue producing items
+            // safely.
             std::unique_lock<std::mutex> lock(g_producerMtx);
             g_cv.wait(lock);
         }
@@ -60,12 +63,16 @@ void consume(ThreadSafeQueue<int>& queue,
         {
             int index = randValue - 1;
             size_t expected = 0;
-            if (!completed && storage[index].m_order.compare_exchange_strong(expected, g_order))
+            if (!completed &&  // Check if the generated number is already present in the
+                               // storage. Do it in a thread-safe manner using the atomic
+                               // operation compare_exchange_strong.
+                storage[index].m_order.compare_exchange_strong(expected, g_order))
             {
                 // Calculate time it took to generate the value
                 auto endTime = getCurrentTimeInMicroseconds();
                 auto timeTaken = endTime - g_startTime;
 
+                // Save the generated number
                 storage[index].m_order = g_order++;
                 storage[index].m_generationTime = timeTaken;
 
@@ -76,6 +83,7 @@ void consume(ThreadSafeQueue<int>& queue,
 
                 if (g_order == elements + 1)
                 {
+                    // All the numbers are generated
                     completed.store(true);
                     g_cv.notify_all();
                     break;

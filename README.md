@@ -50,6 +50,13 @@ cmake -G Ninja ..
 ninja
 ```
 
+## Usage
+
+By default, the application runs in **No Condition Variables Approach**. To switch to the **Standard Approach** that uses Condition Variables, you can use the `--cv` command line argument.
+
+### Command Line Arguments
+- `--cv`: Enables the Standard Approach with Condition Variables.
+
 ## Continuous Integration
 
 This project uses a CI workflow that includes:
