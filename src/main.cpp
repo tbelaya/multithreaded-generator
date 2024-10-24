@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
     {
         if (arg == "--cv" || arg == "-cv")
         {
+            // Standard approach with condition variables
             cvMode = true;
         }
     }

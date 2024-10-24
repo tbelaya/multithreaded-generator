@@ -26,13 +26,16 @@ void Consumer::consume()
         {
             int index = randValue - 1;
             size_t expected = 0;
-            if (!m_completed->load() &&
+            if (!m_completed->load() &&  // Check if the generated number is already present in the
+                                         // storage. Do it in a thread-safe manner using the atomic
+                                         // operation compare_exchange_strong.
                 (*m_storage)[index].m_order.compare_exchange_strong(expected, m_order))
             {
                 // Calculate time it took to generate the value
                 auto endTime = getCurrentTimeInMicroseconds();
                 auto timeTaken = endTime - m_startTime;
 
+                // Save the generated number
                 (*m_storage)[index].m_order = m_order++;
                 (*m_storage)[index].m_generationTime = timeTaken;
 
@@ -43,6 +46,7 @@ void Consumer::consume()
 
                 if (m_order == m_elementsNr + 1)
                 {
+                    // All the numbers are generated
                     m_completed->store(true);
                 }
                 m_startTime = getCurrentTimeInMicroseconds();
