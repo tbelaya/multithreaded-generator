@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Clang Tidy
         run: |
-          find src -name '*.cpp' | xargs clang-tidy -- -Iinclude -std=c++20
+          clang-tidy src/*.cpp -- -Iinclude -std=c++20
 
       - name: Run Clang Format
         run: |

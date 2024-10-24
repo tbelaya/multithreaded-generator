@@ -1,0 +1,4 @@
+Checks: '-*,clang-analyzer-*,cppcoreguidelines-*'
+HeaderFilterRegex: '^(include/.*)$'
+#SystemHeaders: false
+WarningsAsErrors: '*'
