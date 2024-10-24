@@ -20,13 +20,13 @@ void Consumer::consume()
 {
     int randValue{};
 
-    while (!m_completed)
+    while (!m_completed->load())
     {
         if (m_queue->tryPop(randValue))
         {
             int index = randValue - 1;
             size_t expected = 0;
-            if (!m_completed &&
+            if (!m_completed->load() &&
                 (*m_storage)[index].m_order.compare_exchange_strong(expected, m_order))
             {
                 // Calculate time it took to generate the value
