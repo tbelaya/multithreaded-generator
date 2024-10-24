@@ -26,6 +26,9 @@ jobs:
           rm -rf build
           mkdir build
 
+      - name: Check Clang Tidy Version
+        run: clang-tidy --version
+
       - name: Run Clang Tidy
         run: |
           find src -name '*.cpp' | xargs clang-tidy -- -Iinclude -std=c++20
