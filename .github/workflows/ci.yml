@@ -19,7 +19,13 @@ jobs:
           submodules: true 
 
       - name: Install dependencies
-        run: sudo apt-get install -y clang clang-format clang-tidy ninja-build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          echo "deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-19 main" | sudo tee /etc/apt/sources.list.d/llvm-toolchain-bullseye-19.list
+          sudo apt-get update
+          sudo apt-get install -y clang-19 clang-format-19 clang-tidy-19 ninja-build
 
       - name: Prepare build directory
         run: |
