@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true 
+
+      - name: Install dependencies
+        run: sudo apt-get install -y clang clang-format clang-tidy ninja-build
+
+      - name: Prepare build directory
+        run: |
+          rm -rf build
+          mkdir build
+
+      - name: Run Clang Tidy
+        run: |
+          find src -name '*.cpp' | xargs clang-tidy -- -Iinclude -std=c++20
+
+      - name: Run Clang Format
+        run: |
+          find src tests include -name '*.cpp' -o -name '*.h' | xargs clang-format --dry-run --Werror
+
+      - name: Build the project
+        run: |
+            cd build
+            cmake -G Ninja ..
+            ninja
+
+      - name: Run Tests
+        run: |
+          cd build
+          ./multithreaded_generator_tests
