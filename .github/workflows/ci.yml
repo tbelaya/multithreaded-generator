@@ -24,7 +24,7 @@ jobs:
           brew install llvm ninja
 
       - name: Update PATH for LLVM
-        run: echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
+        run: echo "/opt/homebrew/opt/llvm/bin" >> $GITHUB_PATH
 
       - name: Check Clang tools versions
         run: |
