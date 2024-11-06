@@ -26,10 +26,9 @@ void Consumer::consume()
         {
             int index = randValue - 1;
             size_t expected = 0;
-            if (!m_completed->load() &&  // Check if the generated number is already present in the
-                                         // storage. Do it in a thread-safe manner using the atomic
-                                         // operation compare_exchange_strong.
-                (*m_storage)[index].m_order.compare_exchange_strong(expected, m_order))
+            // Check if the generated number is already present in the storage. Do it in a
+            // thread-safe manner using the atomic operation compare_exchange_strong.
+            if ((*m_storage)[index].m_order.compare_exchange_strong(expected, m_order))
             {
                 // Calculate time it took to generate the value
                 auto endTime = getCurrentTimeInMicroseconds();
@@ -39,10 +38,9 @@ void Consumer::consume()
                 (*m_storage)[index].m_order = m_order++;
                 (*m_storage)[index].m_generationTime = timeTaken;
 
-                std::string output =
-                    std::format("number = {:05}, order = {:05}, generation_time = {:010}\n",
-                                randValue, (*m_storage)[index].m_order.load(), timeTaken);
-                std::cout << output;
+                std::cout << std::format(
+                    "number = {:05}, order = {:05}, generation_time = {:010}\n", randValue,
+                    (*m_storage)[index].m_order.load(), timeTaken);
 
                 if (m_order == m_elementsNr + 1)
                 {

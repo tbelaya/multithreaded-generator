@@ -6,6 +6,8 @@
 #include <mutex>
 #include <random>
 
+namespace
+{
 std::default_random_engine
     g_generator(  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
         std::random_device{}());
@@ -18,12 +20,13 @@ std::condition_variable g_cv;  // NOLINT(cppcoreguidelines-avoid-non-const-globa
 std::atomic_int g_order = 1;  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 long long g_startTime;        // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-long long getCurrentTimeInMicroseconds()
+[[nodiscard]] long long getCurrentTimeInMicroseconds()
 {
     return std::chrono::duration_cast<std::chrono::microseconds>(
                std::chrono::high_resolution_clock::now().time_since_epoch())
         .count();
 }
+}  // namespace
 
 void initializeDistribution(int to)
 {
@@ -35,7 +38,7 @@ void initializeStartTime()
     g_startTime = getCurrentTimeInMicroseconds();
 }
 
-void produce(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed)
+void produce(core::ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed)
 {
     while (!completed.load())
     {
@@ -51,22 +54,21 @@ void produce(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& comple
     std::cout << "CV-based producer finished task.\n";
 }
 
-void consume(ThreadSafeQueue<int>& queue,
+void consume(core::ThreadSafeQueue<int>& queue,
              std::vector<NumberInfo>& storage,
              int elements,
              std::atomic_bool& completed)
 {
     int randValue{};
-    while (!completed)
+    while (!completed.load())
     {
         if (queue.tryPop(randValue))
         {
             int index = randValue - 1;
             size_t expected = 0;
-            if (!completed &&  // Check if the generated number is already present in the
-                               // storage. Do it in a thread-safe manner using the atomic
-                               // operation compare_exchange_strong.
-                storage[index].m_order.compare_exchange_strong(expected, g_order))
+            // Check if the generated number is already present in the storage. Do it in a
+            // thread-safe manner using the atomic operation compare_exchange_strong.
+            if (storage[index].m_order.compare_exchange_strong(expected, g_order))
             {
                 // Calculate time it took to generate the value
                 auto endTime = getCurrentTimeInMicroseconds();
@@ -76,10 +78,9 @@ void consume(ThreadSafeQueue<int>& queue,
                 storage[index].m_order = g_order++;
                 storage[index].m_generationTime = timeTaken;
 
-                std::string output =
-                    std::format("number = {:05}, order = {:05}, generation_time = {:010}\n",
-                                randValue, storage[index].m_order.load(), timeTaken);
-                std::cout << output;
+                std::cout << std::format(
+                    "number = {:05}, order = {:05}, generation_time = {:010}\n", randValue,
+                    storage[index].m_order.load(), timeTaken);
 
                 if (g_order == elements + 1)
                 {
