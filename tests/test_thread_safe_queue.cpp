@@ -7,7 +7,7 @@
 // Test Case 1: tryPush and tryPop success
 TEST(ThreadSafeQueue, PushAndPopSuccessTest)
 {
-    ThreadSafeQueue<int> queue(3);
+    core::ThreadSafeQueue<int> queue(3);
     int value;
 
     // Pushing elements successfully
@@ -27,7 +27,7 @@ TEST(ThreadSafeQueue, PushAndPopSuccessTest)
 // Test Case 2: tryPush failure
 TEST(ThreadSafeQueue, PushFailureTest)
 {
-    ThreadSafeQueue<int> queue(2);
+    core::ThreadSafeQueue<int> queue(2);
 
     EXPECT_TRUE(queue.tryPush(1));
     EXPECT_TRUE(queue.tryPush(2));
@@ -39,7 +39,7 @@ TEST(ThreadSafeQueue, PushFailureTest)
 // Test Case 3: tryPop failure
 TEST(ThreadSafeQueue, PopFailureTest)
 {
-    ThreadSafeQueue<int> queue(2);
+    core::ThreadSafeQueue<int> queue(2);
 
     int value;
     // Attempt to pop an element from an empty queue
@@ -49,7 +49,7 @@ TEST(ThreadSafeQueue, PopFailureTest)
 // Test Case 4: tryPush and tryPop until failure
 TEST(ThreadSafeQueue, PushAndPopUntilFailureTest)
 {
-    ThreadSafeQueue<int> queue(2);
+    core::ThreadSafeQueue<int> queue(2);
     int value;
 
     // Pushing more elements than the queue size is
@@ -67,7 +67,7 @@ TEST(ThreadSafeQueue, PushAndPopUntilFailureTest)
 TEST(ThreadSafeQueue, ConcurrentPushTest)
 {
     const size_t queueSize = 10;
-    ThreadSafeQueue<int> queue(queueSize);
+    core::ThreadSafeQueue<int> queue(queueSize);
     const size_t numThreads = 5;
     const size_t numPushesPerThread = 20;
     std::vector<std::thread> threads;
@@ -102,11 +102,11 @@ TEST(ThreadSafeQueue, ConcurrentPushTest)
 TEST(ThreadSafeQueue, ConcurrentPopTest)
 {
     const size_t queueSize = 10;
-    ThreadSafeQueue<int> queue(queueSize);
+    core::ThreadSafeQueue<int> queue(queueSize);
 
     for (int i = 0; i < queueSize; ++i)
     {
-        queue.tryPush(i);
+        EXPECT_TRUE(queue.tryPush(i));
     }
 
     const size_t numThreads = 5;
@@ -140,7 +140,7 @@ TEST(ThreadSafeQueue, ConcurrentPopTest)
 // Test Case 7: empty queue under concurrent pop test
 TEST(ThreadSafeQueue, EmptyQueueConcurrentPopTest)
 {
-    ThreadSafeQueue<int> queue(5);
+    core::ThreadSafeQueue<int> queue(5);
     const size_t numThreads = 5;
     std::vector<std::thread> threads;
     std::atomic<size_t> failedPops(false);
@@ -172,11 +172,11 @@ TEST(ThreadSafeQueue, EmptyQueueConcurrentPopTest)
 TEST(ThreadSafeQueue, FullQueueConcurrentPushTest)
 {
     const size_t queueSize = 5;
-    ThreadSafeQueue<int> queue(queueSize);
+    core::ThreadSafeQueue<int> queue(queueSize);
 
     for (int i = 0; i < queueSize; ++i)
     {
-        queue.tryPush(i);
+        EXPECT_TRUE(queue.tryPush(i));
     }
 
     const size_t numThreads = 5;

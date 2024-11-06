@@ -43,7 +43,7 @@ void initializeStartTime();
  * @param completed Reference to an atomic boolean that indicates
  *                  whether production is complete.
  */
-void produce(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed);
+void produce(core::ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed);
 
 /**
  * @brief Consumes integers from the thread-safe queue and stores their
@@ -61,7 +61,7 @@ void produce(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& comple
  * @param completed Reference to an atomic boolean that indicates
  *                  whether consumption is complete.
  */
-void consume(ThreadSafeQueue<int>& queue,
+void consume(core::ThreadSafeQueue<int>& queue,
              std::vector<NumberInfo>& storage,
              int elements,
              std::atomic_bool& completed);

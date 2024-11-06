@@ -24,9 +24,9 @@ class Producer
      * @param completed Reference to an atomic boolean to signal
      *                  completion of production.
      */
-    Producer(ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed)
-        : m_queue(&queue)
-        , m_elementsNr(elements)
+    Producer(core::ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed)
+        : m_elementsNr(elements)
+        , m_queue(&queue)
         , m_completed(&completed)
         , m_generator(std::random_device{}())
         , m_distribution(1, m_elementsNr)
@@ -44,10 +44,10 @@ class Producer
     void produce();
 
    private:
-    int m_elementsNr;               ///< The total number of elements to produce.
-    std::atomic_bool* m_completed;  ///< Pointer to the completion flag.
-    ThreadSafeQueue<int>*
+    int m_elementsNr;  ///< The total number of elements to produce.
+    core::ThreadSafeQueue<int>*
         m_queue;  ///< Pointer to the thread-safe queue for storing produced integers.
+    std::atomic_bool* m_completed;           ///< Pointer to the completion flag.
     std::default_random_engine m_generator;  ///< Random number generator.
     std::uniform_int_distribution<int>
         m_distribution;  ///< Distribution for generating random integers.

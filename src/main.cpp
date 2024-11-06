@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
     }
 
     // Create a shared thread-safe queue
-    ThreadSafeQueue<int> queue(QUEUE_SIZE_MAX);
+    core::ThreadSafeQueue<int> queue(QUEUE_SIZE_MAX);
     // Create s storage for random numbers
     std::vector<NumberInfo> storage(elementsNr);
     // Completion flag

@@ -2,6 +2,9 @@
 #include <mutex>
 #include <queue>
 
+namespace core
+{
+
 /**
  * @class ThreadSafeQueue
  * @brief A thread-safe queue implementation with a fixed size.
@@ -22,7 +25,7 @@ class ThreadSafeQueue
      *
      * @param size The maximum size of the queue.
      */
-    ThreadSafeQueue(size_t size) : m_size(size) {}
+    explicit ThreadSafeQueue(size_t size) : m_size(size) {}
 
     /**
      * @brief Attempts to push a value to the queue.
@@ -33,7 +36,7 @@ class ThreadSafeQueue
      * @param val The value to be added to the queue.
      * @return true if the value was successfully added, false if the queue is full.
      */
-    bool tryPush(const T& val)
+    [[nodiscard]] bool tryPush(const T& val)
     {
         std::scoped_lock lock(m_mtx);
         if (m_queue.size() >= m_size)
@@ -53,7 +56,7 @@ class ThreadSafeQueue
      * @param[out] val The value that was removed from the queue.
      * @return true if a value was successfully removed, false if the queue was empty.
      */
-    bool tryPop(T& val)
+    [[nodiscard]] bool tryPop(T& val)
     {
         std::scoped_lock lock(m_mtx);
         if (m_queue.size() == 0)
@@ -70,3 +73,5 @@ class ThreadSafeQueue
     std::queue<T> m_queue;  ///< The underlying standard queue.
     std::mutex m_mtx;       ///< Mutex to ensure thread-safe access.
 };
+
+}  // namespace core

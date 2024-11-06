@@ -41,11 +41,11 @@ class Consumer
      * @param completed Reference to an atomic boolean to signal
      *                  completion of consumption.
      */
-    Consumer(ThreadSafeQueue<int>& queue,
+    Consumer(core::ThreadSafeQueue<int>& queue,
              std::vector<NumberInfo>& storage,
              int elements,
-             std::atomic_bool& completed)
-        : m_queue(&queue), m_storage(&storage), m_elementsNr(elements), m_completed(&completed)
+             std::atomic_bool& completed) noexcept
+        : m_elementsNr(elements), m_queue(&queue), m_storage(&storage), m_completed(&completed)
     {
     }
 
@@ -76,12 +76,12 @@ class Consumer
      *
      * @return Current time in microseconds.
      */
-    static long long getCurrentTimeInMicroseconds();
+    [[nodiscard]] static long long getCurrentTimeInMicroseconds();
 
    private:
     int m_elementsNr;                         ///< The total number of elements to consume.
     inline static long long m_startTime = 0;  ///< Start time for consumption tracking.
-    ThreadSafeQueue<int>* m_queue;  ///< Pointer to the thread-safe queue for retrieving integers.
+    core::ThreadSafeQueue<int>* m_queue;  ///< Pointer to the thread-safe queue for retrieving integers.
     std::vector<NumberInfo>*
         m_storage;                  ///< Pointer to the storage vector for consumed number info.
     std::atomic_bool* m_completed;  ///< Pointer to the completion flag.
