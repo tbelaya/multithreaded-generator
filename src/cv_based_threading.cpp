@@ -17,8 +17,8 @@ std::uniform_int_distribution<int>
 std::mutex g_producerMtx;      // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 std::condition_variable g_cv;  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-std::atomic_int g_order = 1;  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
-long long g_startTime;        // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic_int g_order{1};  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic<long long> g_startTime{0};        // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
 [[nodiscard]] long long getCurrentTimeInMicroseconds()
 {
@@ -35,7 +35,7 @@ void initializeDistribution(int to)
 
 void initializeStartTime()
 {
-    g_startTime = getCurrentTimeInMicroseconds();
+    g_startTime.store(getCurrentTimeInMicroseconds());
 }
 
 void produce(core::ThreadSafeQueue<int>& queue, int elements, std::atomic_bool& completed)
@@ -71,8 +71,9 @@ void consume(core::ThreadSafeQueue<int>& queue,
             if (storage[index].m_order.compare_exchange_strong(expected, g_order))
             {
                 // Calculate time it took to generate the value
-                auto endTime = getCurrentTimeInMicroseconds();
-                auto timeTaken = endTime - g_startTime;
+                const auto now = getCurrentTimeInMicroseconds();
+                const auto prev = g_startTime.exchange(now);
+                const auto timeTaken = now - prev;
 
                 // Save the generated number
                 storage[index].m_order = g_order++;
@@ -89,8 +90,6 @@ void consume(core::ThreadSafeQueue<int>& queue,
                     g_cv.notify_all();
                     break;
                 }
-
-                g_startTime = getCurrentTimeInMicroseconds();
             }
             g_cv.notify_one();
         }

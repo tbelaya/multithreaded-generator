@@ -80,7 +80,7 @@ class Consumer
 
    private:
     int m_elementsNr;                         ///< The total number of elements to consume.
-    inline static long long m_startTime = 0;  ///< Start time for consumption tracking.
+    inline static std::atomic<long long> m_startTime = 0;  ///< Start time for consumption tracking.
     core::ThreadSafeQueue<int>*
         m_queue;  ///< Pointer to the thread-safe queue for retrieving integers.
     std::vector<NumberInfo>*
