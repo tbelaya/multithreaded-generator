@@ -6,7 +6,7 @@
 
 void Consumer::setStartTime()
 {
-    m_startTime = getCurrentTimeInMicroseconds();
+    m_startTime.store(getCurrentTimeInMicroseconds());
 }
 
 long long Consumer::getCurrentTimeInMicroseconds()
@@ -31,8 +31,9 @@ void Consumer::consume()
             if ((*m_storage)[index].m_order.compare_exchange_strong(expected, m_order))
             {
                 // Calculate time it took to generate the value
-                auto endTime = getCurrentTimeInMicroseconds();
-                auto timeTaken = endTime - m_startTime;
+                const auto now = getCurrentTimeInMicroseconds();
+                auto prev = m_startTime.exchange(now);
+                const auto timeTaken = now - prev;
 
                 // Save the generated number
                 (*m_storage)[index].m_order = m_order++;
@@ -47,7 +48,6 @@ void Consumer::consume()
                     // All the numbers are generated
                     m_completed->store(true);
                 }
-                m_startTime = getCurrentTimeInMicroseconds();
             }
         }
     }
