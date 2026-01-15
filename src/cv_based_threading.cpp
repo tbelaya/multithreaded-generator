@@ -17,8 +17,9 @@ std::uniform_int_distribution<int>
 std::mutex g_producerMtx;      // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 std::condition_variable g_cv;  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-std::atomic_int g_order{1};  // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
-std::atomic<long long> g_startTime{0};        // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic_int g_order{1};        // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+std::atomic<long long> g_startTime{// NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+                                   0};
 
 [[nodiscard]] long long getCurrentTimeInMicroseconds()
 {

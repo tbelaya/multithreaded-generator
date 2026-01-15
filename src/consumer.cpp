@@ -33,7 +33,7 @@ void Consumer::consume()
                 // Calculate time it took to generate the value
                 const auto now = getCurrentTimeInMicroseconds();
                 auto prev = m_startTime.exchange(now);
-                const auto timeTaken = now - prev;  
+                const auto timeTaken = now - prev;
 
                 // Save the generated number
                 (*m_storage)[index].m_order = m_order++;

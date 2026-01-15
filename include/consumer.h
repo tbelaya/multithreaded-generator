@@ -79,7 +79,7 @@ class Consumer
     [[nodiscard]] static long long getCurrentTimeInMicroseconds();
 
    private:
-    int m_elementsNr;                         ///< The total number of elements to consume.
+    int m_elementsNr;  ///< The total number of elements to consume.
     inline static std::atomic<long long> m_startTime = 0;  ///< Start time for consumption tracking.
     core::ThreadSafeQueue<int>*
         m_queue;  ///< Pointer to the thread-safe queue for retrieving integers.
