@@ -1,22 +1,29 @@
 #include <iostream>
 #include <numeric>
+#include <span>
 #include <thread>
 
 #include "consumer.h"
 #include "cv_based_threading.h"
 #include "producer.h"
 
-enum
-{
-    QUEUE_SIZE_MAX = 1000
-};
+constexpr std::size_t QUEUE_SIZE_MAX = 1000;
 
 int main(int argc, char* argv[])
 {
     bool cvMode = false;
 
     // Check command-line arguments
-    std::vector<std::string> arguments(argv + 1, argv + argc);
+    std::span<char*> args(argv, static_cast<std::size_t>(argc));
+
+    std::vector<std::string> arguments;
+    arguments.reserve(args.size() > 1 ? args.size() - 1 : 0);
+
+    for (auto arg : args.subspan(1))
+    {
+        arguments.emplace_back(arg);
+    }
+
     for (const auto& arg : arguments)
     {
         if (arg == "--cv" || arg == "-cv")
